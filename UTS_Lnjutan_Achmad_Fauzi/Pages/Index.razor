@@ -1,0 +1,141 @@
+﻿@page "/"
+@using UTS_Lnjutan_Achmad_Fauzi.Models;
+
+<PageTitle>Index</PageTitle>
+
+<div class="row" style="display:flex">
+    <div class="col-14">
+        <div class="card">
+            <div class="card-header alert-dark">
+                <h2 class="m-auto fw-bold">DAFTAR BUKU</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered m-auto">
+                    <thead>
+                        <tr>
+                            <th>Genre</th>
+                            <th>Judul</th>
+                            <th>Aksi</th>
+         
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var buku in book)
+                        {
+                            <tr>
+                                <td style="display:flex; margin:auto">@buku.genre</td>
+                                <td>@buku.judul</td>
+                                <td>
+                                    <button class="btn btn-danger align-content-center" @onclick="(()=> REMOVE(buku))">Hapus</button>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <button class="btn btn-primary" style="display:flex; margin:auto" @onclick="(()=>ADDED())">Tambah Buku</button>
+
+                            </td>
+                        </tr>
+                        <tr colspan="4">
+                            <h4 class="fw-bold">Banyak Buku Yang Sudah Ada : @banyak.DetailTotal</h4>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+    private void ADDED()
+    {
+        Random random = new Random();
+        int indexGenre = random.Next(genre.Count);
+        TampGen = genre[indexGenre];
+
+        int indexKategori = 0;
+
+        if (TampGen == Genre.Novel.ToString())
+        {
+            indexKategori = random.Next(judulNovel.Count);
+            TamKtg = judulNovel[indexKategori];
+            banyak.jumNovel++;
+
+        }
+        else if (TampGen == Genre.Komik.ToString())
+        {
+            indexKategori = random.Next(judulAnime.Count);
+            TamKtg = judulAnime[indexKategori];
+            banyak.jumKomik++;
+
+        }
+
+        else if (TampGen == Genre.Sejarah.ToString())
+        {
+            indexKategori = random.Next(judulSejarah.Count);
+            TamKtg = judulSejarah[indexKategori];
+            banyak.jumSejarah++;
+
+        }
+        indexKategori = 0;
+
+        book.Add(new buku(TampGen, TamKtg));
+    }
+
+    List<buku> book = new List<buku>();
+    detail banyak = new detail();
+    List<string> genre = Enum.GetNames(typeof(Genre)).ToList();
+
+    List<string> judulAnime = new List<string>()
+    {
+        "One Piece","Black Clover","Jujutsu Kaisen",
+    };
+
+    List<string> judulNovel = new List<string>()
+    {
+         "Andrea Hirata","J.K Rowling","Tere Liye",
+    };
+
+    List<string> judulSejarah = new List<string>()
+    {
+        "Indonesia","Yunani","Jepang",
+    };
+
+    public string TampGen = string.Empty;
+    public string TamKtg = string.Empty;
+
+
+
+   
+   
+  
+    protected override void OnInitialized()
+    {
+        ADDED();
+    }
+
+    private void REMOVE(buku buku)
+    {
+        book.Remove(buku);
+
+        if (buku.genre == Genre.Komik.ToString())
+        {
+            banyak.jumKomik--;
+        }
+        else if (buku.genre == Genre.Novel.ToString())
+        {
+            banyak.jumNovel--;
+        }
+        else if (buku.genre == Genre.Sejarah.ToString())
+        {
+            banyak.jumSejarah--;
+        }
+    }
+   
+}
